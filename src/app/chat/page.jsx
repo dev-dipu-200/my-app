@@ -50,7 +50,7 @@ export default function Chat() {
       const res = await axios.post(
         "http://localhost:8000/api/rooms/",
         {
-          name: "General Chat",
+          type: "General Chat",
           participants: [user.username, log_user.username],
         },
         {
@@ -80,6 +80,7 @@ export default function Chat() {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setMessages(res.data.results.today);
     } catch (err) {
       if (err.response?.status === 401) {
@@ -101,7 +102,7 @@ export default function Chat() {
         "http://localhost:8000/api/messages/",
         {
           room_id: roomId,
-          content: input,
+          message: input,
         },
         {
           headers: {
@@ -109,8 +110,10 @@ export default function Chat() {
           },
         }
       );
+      console.log('Message__________________', messages);
+      
+      setMessages(messages?.length > 1 ? [...messages, res.data] : [res.data]);
 
-      setMessages([...messages, res.data]);
       setInput("");
     } catch (err) {
       if (err.response?.status === 401) {
@@ -164,7 +167,7 @@ export default function Chat() {
                       : "bg-gray-200"
                   }`}
                 >
-                  {msg.content}
+                  {msg.message}
                 </div>
               ))}
             </div>
